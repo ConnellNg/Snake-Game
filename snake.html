@@ -1,0 +1,29 @@
+<!DOCTYPE html?>
+<html>  
+    <head>
+        <title>Snake Game</title>
+    </head>
+
+    <body>
+        <canvas id="gameCanvas" width ="500" height="500">&lt;</canvas>
+        <script>    
+            const canvas_border_colour = "black";
+            const canvas_background_colour = "white";
+
+            //canvas element
+            var gameCanvas = document.getElementById("gameCanvas");
+            
+            //return 2d drawing
+            var ctx = gameCanvas.getContext("2d")
+
+            ctx.fillStyle = canvas_background_colour;
+            ctx.strokestyle= canvas_border_colour;
+
+            //rectangle
+            ctx.fillRect(0,0,gameCanvas.width, gameCanvas.height);
+
+            //border
+            ctx.strokeRect(0,0, gameCanvas.width, gameCanvas.height);
+        </script>
+    </body>
+</html>
