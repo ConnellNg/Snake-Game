@@ -8,31 +8,25 @@
 <body>
     <canvas id="gameCanvas" width="500" height="500"></canvas>
     <script>
-        // --- CONSTANTS ---
         const canvas_border_colour = "black";
         const canvas_background_colour = "white";
         const snake_colour = "lightgreen";
         const snake_border_colour = "darkgreen";
-        const GAME_SPEED = 100; // Define game speed in milliseconds
+        const GAME_SPEED = 100;
 
-        // --- MOVEMENT VARIABLES ---
         let dx = 10;
         let dy = 0;
 
-        // --- CANVAS SETUP ---
         var gameCanvas = document.getElementById("gameCanvas");
         var ctx = gameCanvas.getContext("2d");
 
-        // --- SNAKE DATA ---
         // drawing snake and location
         let snake = [
             { x: 150, y: 150 },
         ];
 
-        // --- DRAWING FUNCTIONS ---
-
+        //Drawing snake
         function drawSnakeBody(snakeBody) {
-            // NOTE: Using locally defined colors as per original script structure
             ctx.fillStyle = "lightgreen";
             ctx.strokestyle = "darkgreen";
             ctx.fillRect(snakeBody.x, snakeBody.y, 10, 10);
@@ -43,50 +37,33 @@
             snake.forEach(drawSnakeBody);
         }
 
-        // --- MOVEMENT FUNCTION ---
-
+        //snake auto move
         function advanceSnake() {
-            // Create new head
             const head = { x: snake[0].x + dx, y: snake[0].y + dy };
-            // Add new head to the beginning
             snake.unshift(head);
-            // Remove the tail segment (snake moves, but doesn't grow)
             snake.pop();
         }
 
-        // --- CANVAS UTILITY FUNCTION ---
-
+        //clearing canvas to rid of old trails
         function clearCanvas() {
-            ctx.fillStyle = canvas_background_colour; // Use constant
-            ctx.strokeStyle = canvas_border_colour;   // Use constant
-
-            // Clear the entire canvas
+            ctx.fillStyle = canvas_background_colour;
+            ctx.strokeStyle = canvas_border_colour;
             ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
-
-            // Draw border
-            // FIX: Corrected variable typos (gameCanvis -> gameCanvas and height access)
             ctx.strokeRect(0, 0, gameCanvas.width, gameCanvas.height);
         }
 
-        // --- GAME LOOP ---
-
+        //Game loop
         function main() {
             setTimeout(function onTick() {
                 clearCanvas();
                 advanceSnake();
                 drawSnake();
-                // FIX: Removed undefined function call stepThree()
-                main(); // Call main again to keep the loop going
-            }, GAME_SPEED) // Use defined constant for speed
+                main();
+            }, GAME_SPEED) 
         }
 
-        // --- INITIAL EXECUTION ---
-
-        // NOTE: The initial drawing logic has been moved/commented out
-        // as the 'main' loop handles it continuously.
-
+        // INITIAL EXECUTION(now handled by main loop):
         /*
-        // Original immediate execution calls (now handled by main loop):
         advanceSnake()
         dx = 0;
         dy = -10;
