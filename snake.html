@@ -1,29 +1,135 @@
-<!DOCTYPE html?>
-<html>  
-    <head>
-        <title>Snake Game</title>
-    </head>
+<!DOCTYPE html>
+<html>
 
-    <body>
-        <canvas id="gameCanvas" width ="500" height="500">&lt;</canvas>
-        <script>    
-            const canvas_border_colour = "black";
-            const canvas_background_colour = "white";
+<head>
+    <title>Snake Game</title>
+</head>
 
-            //canvas element
-            var gameCanvas = document.getElementById("gameCanvas");
-            
-            //return 2d drawing
-            var ctx = gameCanvas.getContext("2d")
+<body>
+    <canvas id="gameCanvas" width="500" height="500"></canvas>
+    <script>
+        // --- CONSTANTS ---
+        const canvas_border_colour = "black";
+        const canvas_background_colour = "white";
+        const snake_colour = "lightgreen";
+        const snake_border_colour = "darkgreen";
+        const GAME_SPEED = 100; // Define game speed in milliseconds
 
-            ctx.fillStyle = canvas_background_colour;
-            ctx.strokestyle= canvas_border_colour;
+        // --- MOVEMENT VARIABLES ---
+        let dx = 10;
+        let dy = 0;
 
-            //rectangle
-            ctx.fillRect(0,0,gameCanvas.width, gameCanvas.height);
+        // --- CANVAS SETUP ---
+        var gameCanvas = document.getElementById("gameCanvas");
+        var ctx = gameCanvas.getContext("2d");
 
-            //border
-            ctx.strokeRect(0,0, gameCanvas.width, gameCanvas.height);
-        </script>
-    </body>
+        // --- SNAKE DATA ---
+        // drawing snake and location
+        let snake = [
+            { x: 150, y: 150 },
+        ];
+
+        // --- DRAWING FUNCTIONS ---
+
+        function drawSnakeBody(snakeBody) {
+            // NOTE: Using locally defined colors as per original script structure
+            ctx.fillStyle = "lightgreen";
+            ctx.strokestyle = "darkgreen";
+            ctx.fillRect(snakeBody.x, snakeBody.y, 10, 10);
+            ctx.strokeRect(snakeBody.x, snakeBody.y, 10, 10);
+        }
+
+        function drawSnake() {
+            snake.forEach(drawSnakeBody);
+        }
+
+        // --- MOVEMENT FUNCTION ---
+
+        function advanceSnake() {
+            // Create new head
+            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+            // Add new head to the beginning
+            snake.unshift(head);
+            // Remove the tail segment (snake moves, but doesn't grow)
+            snake.pop();
+        }
+
+        // --- CANVAS UTILITY FUNCTION ---
+
+        function clearCanvas() {
+            ctx.fillStyle = canvas_background_colour; // Use constant
+            ctx.strokeStyle = canvas_border_colour;   // Use constant
+
+            // Clear the entire canvas
+            ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+            // Draw border
+            // FIX: Corrected variable typos (gameCanvis -> gameCanvas and height access)
+            ctx.strokeRect(0, 0, gameCanvas.width, gameCanvas.height);
+        }
+
+        // --- GAME LOOP ---
+
+        function main() {
+            setTimeout(function onTick() {
+                clearCanvas();
+                advanceSnake();
+                drawSnake();
+                // FIX: Removed undefined function call stepThree()
+                main(); // Call main again to keep the loop going
+            }, GAME_SPEED) // Use defined constant for speed
+        }
+
+        // --- INITIAL EXECUTION ---
+
+        // NOTE: The initial drawing logic has been moved/commented out
+        // as the 'main' loop handles it continuously.
+
+        /*
+        // Original immediate execution calls (now handled by main loop):
+        advanceSnake()
+        dx = 0;
+        dy = -10;
+        advanceSnake();
+        drawSnake();
+        */
+
+        // Start the game loop
+        main();
+
+        //change direction
+        function changeDirection(event) {
+            const LEFT_KEY = 37;
+            const RIGHT_KEY = 39;
+            const UP_KEY = 38;
+            const DOWN_KEY = 40;
+
+            const keyPressed = event.keyCode;
+            const goingUp = dy === -10;
+            const goingDown = dy === 10;
+            const goingRight = dx === 10;
+            const goingLeft = dx === -10;
+
+            if (keyPressed === LEFT_KEY && !goingRight) {
+                dx = -10;
+                dy = 0;
+            }
+            if (keyPressed === UP_KEY && !goingDown) {
+                dx = 0;
+                dy = -10;
+            }
+            if (keyPressed === RIGHT_KEY && !goingLeft) {
+                dx = 10;
+                dy = 0;
+            }
+            if (keyPressed === DOWN_KEY && !goingDown) {
+                dx = 0;
+                dy = 10;
+            }
+        }
+
+        document.addEventListener("keydown", changeDirection)
+    </script>
+</body>
+
 </html>
