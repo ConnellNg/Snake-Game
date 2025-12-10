@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Snake Game</title>
 </head>
 
 <body>
+    <div id = "score">0</div>
     <canvas id="gameCanvas" width="500" height="500"></canvas>
+
     <script>
         const canvas_border_colour = "black";
         const canvas_background_colour = "white";
@@ -17,18 +18,18 @@
         let dx = 10;
         let dy = 0;
 
+        let score = 0;
+
         var gameCanvas = document.getElementById("gameCanvas");
         var ctx = gameCanvas.getContext("2d");
 
-        // drawing snake and location
         let snake = [
-            { x: 150, y: 150 },
+            { x: 150, y: 150 }
         ];
 
-        //Drawing snake
         function drawSnakeBody(snakeBody) {
             ctx.fillStyle = "lightgreen";
-            ctx.strokestyle = "darkgreen";
+            ctx.strokeStyle = "darkgreen";
             ctx.fillRect(snakeBody.x, snakeBody.y, 10, 10);
             ctx.strokeRect(snakeBody.x, snakeBody.y, 10, 10);
         }
@@ -37,14 +38,20 @@
             snake.forEach(drawSnakeBody);
         }
 
-        //snake auto move
         function advanceSnake() {
             const head = { x: snake[0].x + dx, y: snake[0].y + dy };
             snake.unshift(head);
-            snake.pop();
+
+            const didEatFood = snake[0].x === foodX && snake[0].y === foodY;
+            if (didEatFood) {
+                score += 10;
+                document.getElementById("score").innerHTML = score;
+                createFood();
+            } else {
+                snake.pop();
+            }
         }
 
-        //clearing canvas to rid of old trails
         function clearCanvas() {
             ctx.fillStyle = canvas_background_colour;
             ctx.strokeStyle = canvas_border_colour;
@@ -52,29 +59,19 @@
             ctx.strokeRect(0, 0, gameCanvas.width, gameCanvas.height);
         }
 
-        //Game loop
         function main() {
             setTimeout(function onTick() {
                 clearCanvas();
+                drawFood();
                 advanceSnake();
                 drawSnake();
                 main();
-            }, GAME_SPEED) 
+            }, GAME_SPEED);
         }
 
-        // INITIAL EXECUTION(now handled by main loop):
-        /*
-        advanceSnake()
-        dx = 0;
-        dy = -10;
-        advanceSnake();
-        drawSnake();
-        */
-
-        // Start the game loop
+        createFood();
         main();
 
-        //change direction
         function changeDirection(event) {
             const LEFT_KEY = 37;
             const RIGHT_KEY = 39;
@@ -105,8 +102,30 @@
             }
         }
 
-        document.addEventListener("keydown", changeDirection)
+        function randomTen(min, max) {
+            return Math.round((Math.random() * (max - min) + min) / 10) * 10;
+        }
+
+        function createFood() {
+            foodX = randomTen(0, gameCanvas.width - 10);
+            foodY = randomTen(0, gameCanvas.height - 10);
+
+            snake.forEach(function isFoodOnSnake(part) {
+                const foodIsOnSnake = part.x == foodX && part.y == foodY;
+                if (foodIsOnSnake) createFood();
+            });
+        }
+
+        function drawFood() {
+            ctx.fillStyle = "red";
+            ctx.strokeStyle = "darkred";
+            ctx.fillRect(foodX, foodY, 10, 10);
+            ctx.strokeRect(foodX, foodY, 10, 10);
+        }
+
+        function
+
+        document.addEventListener("keydown", changeDirection);
     </script>
 </body>
-
 </html>
